@@ -53,8 +53,8 @@ function format(text, opts) {
   if (opts.keepIndentation) {
     indentation = text.match(/^([ \t]*)/)[1];
     const tabSpaces = ' '.repeat(opts.tabWidth);
-    const indentationSpaces = indentation.replace(/\t/g, tabSpaces);
-    const indentationWidth = indentationSpaces.length;
+    indentation = indentation.replace(/\t/g, tabSpaces);
+    const indentationWidth = indentation.length;
     opts.printWidth -= indentationWidth;
   }
 
