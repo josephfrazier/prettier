@@ -56,6 +56,9 @@ function format(text, opts) {
     indentation = indentation.replace(/\t/g, tabSpaces);
     const indentationWidth = indentation.length;
     opts.printWidth -= indentationWidth;
+    if (opts.useTabs) {
+      indentation = indentation.replace(RegExp(tabSpaces, 'g'), '\t');
+    }
   }
 
   const ast = parser.parse(text, opts);
