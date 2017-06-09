@@ -50,25 +50,6 @@
     "uglify-es": "3.0.15",
     "webpack": "2.6.1"
   },
-  "bundledDependencies": [
-    "babel-code-frame",
-    "babylon",
-    "chalk",
-    "diff",
-    "esutils",
-    "flow-parser",
-    "get-stdin",
-    "glob",
-    "graphql",
-    "jest-validate",
-    "minimist",
-    "postcss",
-    "postcss-less",
-    "postcss-media-query-parser",
-    "postcss-scss",
-    "postcss-selector-parser",
-    "postcss-values-parser"
-  ],
   "scripts": {
     "test": "jest",
     "test-integration": "jest tests_integration",
