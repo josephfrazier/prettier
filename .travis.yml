@@ -7,6 +7,8 @@ node_js:
 cache:
   directories:
   - node_modules
+before_install:
+  - rm -rf $HOME/.cache/yarn
 script:
   - yarn lint
   - AST_COMPARE=1 yarn test || AST_COMPARE yarn test -- --runInBand
