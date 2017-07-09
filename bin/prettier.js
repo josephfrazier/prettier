@@ -9,7 +9,6 @@ const globby = require("globby");
 const chalk = require("chalk");
 const minimist = require("minimist");
 const readline = require("readline");
-const prettier = eval("require")("../index");
 const cleanAST = require("../src/clean-ast.js").cleanAST;
 
 // If invoked directly, pass-through CLI arguments and streams
@@ -32,9 +31,9 @@ module.exports = { cli: cliWrapper };
 
 // The cli() function throws Errors in order to exit early,
 // so we need to convert those into resolved Promises.
-function cliWrapper(args, stdin, stdout, stderr) {
+function cliWrapper(args, stdin, stdout, stderr, prettier) {
   try {
-    return cli(args, stdin, stdout, stderr);
+    return cli(args, stdin, stdout, stderr, prettier);
   } catch (err) {
     if (!("exitCode" in err)) {
       err.exitCode = 1;
@@ -45,7 +44,8 @@ function cliWrapper(args, stdin, stdout, stderr) {
 
 // prettier-ignore
 // This is ignored to make it easier to merge upstream prettier changes.
-function cli(args, stdin, stdout, stderr) {
+function cli(args, stdin, stdout, stderr, prettier) {
+  prettier = prettier || eval("require")("../index");
 
 let exitCode = 0;
 

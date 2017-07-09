@@ -27,3 +27,30 @@ test("can pass arguments, stdin/stdout/stderr to CLI programmatically", done => 
     done();
   });
 });
+
+test("can pass custom prettier instance to CLI programmatically", done => {
+  const stdin = stringToStream("0");
+
+  let output = "";
+  const stdout = new stream.Writable({
+    write: function(chunk, encoding, next) {
+      output += chunk.toString();
+      next();
+    }
+  });
+
+  const stderr = new stream.Writable({
+    write: function(chunk, encoding, next) {
+      next();
+    }
+  });
+
+  const version = "CUSTOM_VERSION";
+  prettierCli
+    .cli(["--version"], stdin, stdout, stderr, { version: version })
+    .then(result => {
+      expect(result.exitCode).toEqual(0);
+      expect(output).toEqual(version + "\n");
+      done();
+    });
+});
