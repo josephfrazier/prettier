@@ -60,6 +60,10 @@ const console_error = console_warn;
 
 const argv = minimist(args, {
   boolean: [
+    // prettier_d options
+    "fallback",
+
+    // prettier options
     "write",
     "stdin",
     "use-tabs",
@@ -232,7 +236,17 @@ function format(input, opt) {
     return { formatted: opt.filepath || "(stdin)\n" };
   }
 
+  try {
+
   return prettier.formatWithCursor(input, opt);
+
+  } catch (err) {
+    if (!argv.fallback) {
+      throw err
+    }
+
+    return { formatted: input };
+  }
 }
 
 function handleError(filename, e) {

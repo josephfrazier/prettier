@@ -4,6 +4,10 @@ const validate = require("jest-validate").validate;
 const deprecatedConfig = require("./deprecated");
 
 const defaults = {
+  // prettier_d options
+  fallback: false,
+
+  // prettier options
   cursorOffset: -1,
   rangeStart: 0,
   rangeEnd: Infinity,
