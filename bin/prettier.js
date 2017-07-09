@@ -11,54 +11,7 @@ const minimist = require("minimist");
 const readline = require("readline");
 const cleanAST = require("../src/clean-ast.js").cleanAST;
 
-// If invoked directly, pass-through CLI arguments and streams
-// See https://stackoverflow.com/questions/4981891/node-js-equivalent-of-pythons-if-name-main/6090287#6090287
-if (typeof require != "undefined" && require.main === module) {
-  cliWrapper(
-    process.argv.slice(2),
-    process.stdin,
-    process.stdout,
-    process.stderr
-  ).then(result => {
-    process.exitCode = result.exitCode;
-    if (result.message) {
-      console.error(result.message);
-    }
-  });
-}
-
-module.exports = { cli: cliWrapper };
-
-// The cli() function throws Errors in order to exit early,
-// so we need to convert those into resolved Promises.
-function cliWrapper(args, stdin, stdout, stderr, prettier) {
-  try {
-    return cli(args, stdin, stdout, stderr, prettier);
-  } catch (err) {
-    if (!("exitCode" in err)) {
-      err.exitCode = 1;
-    }
-    return Promise.resolve(err);
-  }
-}
-
-// prettier-ignore
-// This is ignored to make it easier to merge upstream prettier changes.
-function cli(args, stdin, stdout, stderr, prettier) {
-  prettier = prettier || eval("require")("../index");
-
-let exitCode = 0;
-
-// adapted from https://github.com/nodejs/node/blob/d6fece14369ab5d9d64e48ed58cea168f5084a80/lib/console.js#L104-L109
-function logHelper () {
-  this.write(util.format.apply(null, arguments) + '\n');
-}
-
-const console_log = logHelper.bind(stdout);
-const console_warn = logHelper.bind(stderr);
-const console_error = console_warn;
-
-const argv = minimist(args, {
+const minimistOpts = console_warn => ({
   boolean: [
     // prettier_d options
     "fallback",
@@ -109,6 +62,55 @@ const argv = minimist(args, {
     }
   }
 });
+
+// If invoked directly, pass-through CLI arguments and streams
+// See https://stackoverflow.com/questions/4981891/node-js-equivalent-of-pythons-if-name-main/6090287#6090287
+if (typeof require != "undefined" && require.main === module) {
+  cliWrapper(
+    process.argv.slice(2),
+    process.stdin,
+    process.stdout,
+    process.stderr
+  ).then(result => {
+    process.exitCode = result.exitCode;
+    if (result.message) {
+      console.error(result.message);
+    }
+  });
+}
+
+module.exports = { cli: cliWrapper, minimistOpts: minimistOpts };
+
+// The cli() function throws Errors in order to exit early,
+// so we need to convert those into resolved Promises.
+function cliWrapper(args, stdin, stdout, stderr, prettier) {
+  try {
+    return cli(args, stdin, stdout, stderr, prettier);
+  } catch (err) {
+    if (!("exitCode" in err)) {
+      err.exitCode = 1;
+    }
+    return Promise.resolve(err);
+  }
+}
+
+// prettier-ignore
+// This is ignored to make it easier to merge upstream prettier changes.
+function cli(args, stdin, stdout, stderr, prettier) {
+  prettier = prettier || eval("require")("../index");
+
+let exitCode = 0;
+
+// adapted from https://github.com/nodejs/node/blob/d6fece14369ab5d9d64e48ed58cea168f5084a80/lib/console.js#L104-L109
+function logHelper () {
+  this.write(util.format.apply(null, arguments) + '\n');
+}
+
+const console_log = logHelper.bind(stdout);
+const console_warn = logHelper.bind(stderr);
+const console_error = console_warn;
+
+const argv = minimist(args, minimistOpts(console_warn));
 
 if (argv["version"]) {
   console_log(prettier.version);

@@ -4,6 +4,16 @@ const stream = require("stream");
 const stringToStream = require("string-to-stream");
 const prettierCli = require("../../bin/prettier");
 
+test("exports minimist options", () => {
+  const minimistOpts = prettierCli.minimistOpts(console.warn);
+
+  expect(minimistOpts.boolean).toBeInstanceOf(Array);
+  expect(minimistOpts.string).toBeInstanceOf(Array);
+  expect(minimistOpts.default).toBeInstanceOf(Object);
+  expect(minimistOpts.alias).toBeInstanceOf(Object);
+  expect(minimistOpts.unknown).toBeInstanceOf(Function);
+});
+
 test("can pass arguments, stdin/stdout/stderr to CLI programmatically", done => {
   const stdin = stringToStream("0");
 
