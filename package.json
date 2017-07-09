@@ -21,6 +21,8 @@
     "globby": "^6.1.0",
     "graphql": "0.10.1",
     "jest-validate": "20.0.3",
+    "json-align": "0.1.0",
+    "json-stable-stringify": "1.0.1",
     "json-to-ast": "2.0.0-alpha1.2",
     "minimist": "1.2.0",
     "parse5": "3.0.2",

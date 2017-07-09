@@ -10,11 +10,14 @@ const chalk = require("chalk");
 const minimist = require("minimist");
 const readline = require("readline");
 const cleanAST = require("../src/clean-ast.js").cleanAST;
+const stringifySorted = require("json-stable-stringify");
+const stringifyAligned = require("json-align");
 
 const minimistOpts = console_warn => ({
   boolean: [
     // prettier_d options
     "fallback",
+    "json",
 
     // prettier options
     "write",
@@ -239,6 +242,19 @@ function format(input, opt) {
   }
 
   try {
+
+  if (argv.json) {
+    const sorted = stringifyAligned(
+      JSON.parse(stringifySorted(JSON.parse(input))),
+      null,
+      opt.tabWidth,
+      true
+    )
+
+    // Put a comma after strings, numbers, objects, arrays, `true`, `false`,
+    // or `null` at the end of a line. See the grammar at http://json.org/
+    return { formatted: sorted.replace(/(.["\d}\]el])$/gm, '$1,') }
+  }
 
   return prettier.formatWithCursor(input, opt);
 

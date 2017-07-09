@@ -91,3 +91,31 @@ test("can pass --fallback to CLI programmatically", done => {
       done();
     });
 });
+
+test("can pass --json to CLI programmatically", done => {
+  const input = '{"K":"V", "KK": "VV"}';
+  const stdin = stringToStream(input);
+
+  let output = "";
+  const stdout = new stream.Writable({
+    write: function(chunk, encoding, next) {
+      output += chunk.toString();
+      next();
+    }
+  });
+
+  const stderr = new stream.Writable({
+    write: function(chunk, encoding, next) {
+      next();
+    }
+  });
+
+  prettierCli.cli(["--stdin", "--json"], stdin, stdout, stderr).then(result => {
+    expect(result.exitCode).toEqual(0);
+    expect(output).toEqual(`{
+    "K"  : "V",
+    "KK" : "VV",
+}`);
+    done();
+  });
+});
