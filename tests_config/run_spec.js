@@ -12,6 +12,12 @@ const ALL_PARSERS = process.env["ALL_PARSERS"]
   ? JSON.parse(process.env["ALL_PARSERS"])
   : ["flow", "graphql", "babylon", "typescript"];
 
+function diff(a, b) {
+  return require("diff").createTwoFilesPatch("", "", a, b, "", "", {
+    context: 2
+  });
+}
+
 function run_spec(dirname, parsers, options) {
   /* instabul ignore if */
   if (!parsers || !parsers.length) {
@@ -64,6 +70,16 @@ function run_spec(dirname, parsers, options) {
       );
 
       if (AST_COMPARE) {
+        const input = source;
+        const opt = mergedOptions;
+        // --debug-check
+        const pp = prettier.format(input, opt);
+        const pppp = prettier.format(pp, opt);
+        if (pp !== pppp) {
+          throw new Error(
+            "prettier(source) !== prettier(prettier(source))\n" + diff(pp, pppp)
+          );
+        }
         const ast = parse(source, mergedOptions);
         const astMassaged = massageAST(ast);
         let ppastMassaged;
